@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>stegoXpraveen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background: #000000;
+            color: #00ff00;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: auto;
+            position: relative;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 50px;
+            background: rgba(0, 0, 0, 0.85);
+            border: 3px solid #00ff00;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3), inset 0 0 10px rgba(0, 255, 0, 0.1);
+            position: relative;
+            z-index: 10;
+            min-height: calc(100vh - 120px);
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .form-group { margin-bottom: 3rem; }
+        .btn {
+            padding: 14px 28px;
+            border: 2px solid #00ff00;
+            border-radius: 8px;
+            background: linear-gradient(90deg, #00cc00, #00ff00);
+            color: #0a0a0a;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        .btn:hover {
+            background: linear-gradient(90deg, #00ff00, #00cc00);
+        }
+        .result {
+            padding: 20px;
+            background: linear-gradient(135deg, #001a00, #003300);
+            border: 2px dashed #00ff99;
+            border-radius: 8px;
+            margin-top: 2rem;
+            word-break: break-all;
+            animation: glowPulse 2s infinite;
+        }
+        @keyframes glowPulse {
+            0% { box-shadow: 0 0 5px #00ff99; }
+            50% { box-shadow: 0 0 15px #00ff99; }
+            100% { box-shadow: 0 0 5px #00ff99; }
+        }
+        h1 {
+            color: #00ff00;
+            text-shadow: 0 0 20px #00ff00, 0 0 30px #00cc00;
+            font-size: 5rem;
+            margin-bottom: 2.5rem;
+            text-align: center;
+            animation: waveDistort 3s infinite, neonFlash 4s infinite;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            position: relative;
+            z-index: 11;
+        }
+        @keyframes waveDistort {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02) skewX(2deg); }
+        }
+        @keyframes neonFlash {
+            0%, 100% { text-shadow: 0 0 20px #00ff00, 0 0 30px #00cc00; }
+            50% { text-shadow: 0 0 40px #00ff00, 0 0 60px #00cc00, 0 0 80px #ff00ff; }
+        }
+        h1::before, h1::after {
+            content: "PraveenXstego";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            color: #ff00ff;
+            animation: flicker 1.5s infinite alternate;
+        }
+        h1::after {
+            animation-delay: 0.7s;
+            color: #00cc00;
+        }
+        @keyframes flicker {
+            0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; }
+            20%, 24%, 55% { opacity: 0; }
+        }
+        h2 {
+            color: #00cc00;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            text-shadow: 0 0 10px #00ff00;
+        }
+        label {
+            color: #00ff99;
+            font-size: 1.3rem;
+            text-shadow: 0 0 5px #00ff99;
+        }
+        textarea, input {
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            border: 2px solid #00ff00;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 10px;
+            width: 100%;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+        textarea:focus, input:focus {
+            outline: none;
+            border-color: #00cc00;
+            box-shadow: 0 0 20px #00ff00;
+            transform: scale(1.01);
+        }
+        textarea::placeholder, input::placeholder {
+            color: #00ff99;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="space-canvas"></canvas>
+    <div class="container">
+        <header class="text-center">
+            <h1>PraveenXstego</h1>
+            <p class="text-gray-400 mt-4">Hacker-Grade Secure Communication</p>
+        </header>
+
+        <!-- Tabs -->
+        <div class="flex justify-center mb-12 space-x-10">
+            <button onclick="openTab('sender')" class="tab-link px-8 py-4 bg-transparent text-2xl hover:text-black">SENDER</button>
+            <button onclick="openTab('recipient')" class="tab-link px-8 py-4 bg-transparent text-2xl hover:text-black">RECIPIENT</button>
+        </div>
+
+        <!-- Sender Tab -->
+        <div id="sender" class="tab-content active">
+            <h2>ENCRYPTION MODULE</h2>
+            <p class="text-gray-400 text-center mb-10">Secure your data with precision.</p>
+            <form id="senderForm" class="space-y-10">
+                <div class="form-group">
+                    <label for="visible_message_sender">VISIBLE MESSAGE</label>
+                    <textarea id="visible_message_sender" rows="3" placeholder="Enter visible message" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="secret_message_sender">SECRET MESSAGE</label>
+                    <textarea id="secret_message_sender" rows="4" placeholder="Enter secret message" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="password_sender">PASSWORD</label>
+                    <input type="password" id="password_sender" placeholder="Enter password" required>
+                </div>
+                <div class="flex justify-center space-x-10">
+                    <button type="button" onclick="encryptMessage('sender')" class="btn">ENCRYPT</button>
+                    <button type="button" onclick="clearFields('sender')" class="btn">CLEAR</button>
+                </div>
+            </form>
+            <div id="senderResult" class="mt-10 text-center result" style="display:none;"></div>
+        </div>
+
+        <!-- Recipient Tab -->
+        <div id="recipient" class="tab-content">
+            <h2>DECRYPTION MODULE</h2>
+            <p class="text-gray-400 text-center mb-10">Unveil the hidden message or enter manually.</p>
+            <form id="recipientForm" class="space-y-10">
+                <div class="form-group">
+                    <label for="visible_message_recipient">VISIBLE MESSAGE</label>
+                    <textarea id="visible_message_recipient" rows="3" placeholder="Enter visible message" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="password_recipient">PASSWORD</label>
+                    <input type="password" id="password_recipient" placeholder="Enter password" required>
+                </div>
+                <div class="form-group">
+                    <label for="secret_message_recipient">DECRYPTED SECRET</label>
+                    <textarea id="secret_message_recipient" rows="4" placeholder="Enter decrypted secret" required></textarea>
+                </div>
+                <div class="flex justify-center space-x-10">
+                    <button type="button" onclick="decryptMessage('recipient')" class="btn">DECRYPT</button>
+                    <button type="button" onclick="clearFields('recipient')" class="btn">CLEAR</button>
+                </div>
+            </form>
+            <div id="recipientResult" class="mt-10 text-center result" style="display:none;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Space Background with Stars and Spaceships
+        const canvas = document.getElementById('space-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const stars = [];
+        const spaceships = [];
+        class Star {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 1;
+                this.twinkle = Math.random() * 0.5 + 0.5;
+            }
+            draw() {
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.twinkle})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        class Spaceship {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.speedX = Math.random() * 2 + 1;
+                this.speedY = Math.random() * 2 + 1;
+                this.size = 30;
+            }
+            draw() {
+                ctx.fillStyle = '#ff4500';
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y);
+                ctx.lineTo(this.x - this.size / 2, this.y + this.size);
+                ctx.lineTo(this.x + this.size / 2, this.y + this.size);
+                ctx.closePath();
+                ctx.fill();
+                ctx.fillStyle = '#ff8c00';
+                ctx.fillRect(this.x - 5, this.y + this.size, 10, 15);
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x > canvas.width + this.size) this.x = -this.size;
+                if (this.y > canvas.height + this.size) this.y = -this.size;
+            }
+        }
+
+        function init() {
+            for (let i = 0; i < 200; i++) {
+                stars.push(new Star());
+            }
+            for (let i = 0; i < 5; i++) {
+                spaceships.push(new Spaceship());
+            }
+        }
+        function animate() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < stars.length; i++) {
+                stars[i].draw();
+                stars[i].twinkle = Math.sin(Date.now() * 0.001 + i) * 0.5 + 0.5;
+            }
+            for (let i = 0; i < spaceships.length; i++) {
+                spaceships[i].update();
+                spaceships[i].draw();
+            }
+            requestAnimationFrame(animate);
+        }
+        init();
+        animate();
+
+        // Tab switching
+        function openTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            document.querySelectorAll('.tab-link').forEach(btn => {
+                btn.style.color = '#00ff00';
+                btn.style.background = 'transparent';
+            });
+            const activeBtn = document.querySelector(`button[onclick="openTab('${tabName}')"]`);
+            activeBtn.style.background = 'linear-gradient(90deg, #00cc00, #00ff00)';
+            activeBtn.style.color = '#0a0a0a';
+        }
+
+        // Custom XOR encryption with fixed key length
+        function xorEncrypt(data, key) {
+            if (!data || !key) return '';
+            const paddedKey = key.padEnd(data.length, key);
+            let encrypted = '';
+            for (let i = 0; i < data.length; i++) {
+                encrypted += String.fromCharCode(data.charCodeAt(i) ^ paddedKey.charCodeAt(i));
+            }
+            return btoa(encrypted);
+        }
+
+        // Custom XOR decryption with fixed key length
+        function xorDecrypt(encryptedBase64, key) {
+            if (!encryptedBase64 || !key) return '';
+            try {
+                const encrypted = atob(encryptedBase64);
+                let decrypted = '';
+                for (let i = 0; i < encrypted.length; i++) {
+                    decrypted += String.fromCharCode(encrypted.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+                }
+                return decrypted;
+            } catch (e) {
+                return '';
+            }
+        }
+
+        // Encrypt function with error prevention
+        function encryptMessage(mode) {
+            const visible_message = document.getElementById(`visible_message_${mode}`).value.trim();
+            const secret_message = document.getElementById(`secret_message_${mode}`).value.trim();
+            const password = document.getElementById(`password_${mode}`).value.trim();
+            if (!visible_message || !secret_message || !password) {
+                const resultDiv = document.getElementById(`${mode}Result`);
+                resultDiv.textContent = "Please fill all fields.";
+                resultDiv.style.display = 'block';
+                return;
+            }
+            const data = JSON.stringify({ visible_message, password, secret_message });
+            const encrypted = xorEncrypt(data, password);
+            if (!encrypted) {
+                const resultDiv = document.getElementById(`${mode}Result`);
+                resultDiv.textContent = "Encryption failed. Try again.";
+                resultDiv.style.display = 'block';
+                return;
+            }
+            const resultDiv = document.getElementById(`${mode}Result`);
+            resultDiv.textContent = `ENCRYPTED OUTPUT: ${encrypted}`;
+            resultDiv.style.display = 'block';
+            localStorage.setItem('encrypted_data', encrypted);
+        }
+
+        // Decrypt function with error prevention
+        function decryptMessage(mode) {
+            const visible_message = document.getElementById(`visible_message_${mode}`).value.trim();
+            const password = document.getElementById(`password_${mode}`).value.trim();
+            const storedData = localStorage.getItem('encrypted_data');
+            const resultDiv = document.getElementById(`${mode}Result`);
+
+            if (!storedData) {
+                resultDiv.textContent = "No encrypted data. Please encrypt first.";
+                resultDiv.style.display = 'block';
+                return;
+            }
+            if (!visible_message || !password) {
+                resultDiv.textContent = "Please fill visible message and password.";
+                resultDiv.style.display = 'block';
+                return;
+            }
+
+            try {
+                const decrypted = JSON.parse(xorDecrypt(storedData, password));
+                if (decrypted && decrypted.visible_message === visible_message && decrypted.password === password) {
+                    document.getElementById(`visible_message_${mode}`).value = decrypted.visible_message;
+                    document.getElementById(`password_${mode}`).value = decrypted.password;
+                    document.getElementById(`secret_message_${mode}`).value = decrypted.secret_message;
+                    resultDiv.textContent = "DECRYPTION COMPLETE";
+                } else {
+                    resultDiv.textContent = "Decryption failed. Check password and data.";
+                }
+                resultDiv.style.display = 'block';
+            } catch (e) {
+                resultDiv.textContent = "Decryption error. Ensure correct password and data.";
+                resultDiv.style.display = 'block';
+            }
+        }
+
+        // Clear fields
+        function clearFields(mode) {
+            document.getElementById(`visible_message_${mode}`).value = '';
+            document.getElementById(`secret_message_${mode}`).value = '';
+            document.getElementById(`password_${mode}`).value = '';
+            document.getElementById(`${mode}Result`).style.display = 'none';
+            if (mode === 'sender') localStorage.removeItem('encrypted_data');
+        }
+
+        // Initialize with sender tab active
+        openTab('sender');
+    </script>
+</body>
+</html>
